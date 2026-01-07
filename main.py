@@ -22,7 +22,7 @@ class SafetyGame:
         self.game_stats = {
             "rooms_checked": 0,
             "violations_found": 0,
-            "total_violations": 24,  # 12 реальных нарушений * 6 комнат
+            "total_violations": 24,  # 6 комнат × 4 нарушения = 24
             "hints_used": 0,
             "attempts": 0,
             "score": 0
@@ -31,7 +31,7 @@ class SafetyGame:
         # Создаем базу всех возможных нарушений
         self.all_violations = self.create_all_violations()
         
-        # Создаем комнаты завода
+        # Создаем комнаты завода с 4 нарушениями в каждой
         self.rooms = self.create_factory_rooms()
         
         # Переменные игры
@@ -99,7 +99,7 @@ class SafetyGame:
     def create_all_violations(self):
         """Создаем базу всех возможных нарушений"""
         violations = [
-            # Правильные нарушения (12 штук)
+            # Правильные нарушения (16 штук - больше, чтобы у каждой комнаты было уникальные)
             {
                 "id": "ppe_missing",
                 "name": "Отсутствие средств индивидуальной защиты",
@@ -208,6 +208,42 @@ class SafetyGame:
                 "is_correct": True,
                 "image_key": "cables_on_floor"
             },
+            {
+                "id": "no_safety_glasses",
+                "name": "Отсутствие защитных очков",
+                "description": "Работник не использует защитные очки при работе",
+                "regulation": "ТКП 45-1.03-44-2016 п. 5.14",
+                "penalty": 4,
+                "is_correct": True,
+                "image_key": "no_safety_glasses"
+            },
+            {
+                "id": "spilled_oil",
+                "name": "Пролитое масло на полу",
+                "description": "На полу есть масляные пятна, создающие опасность поскользнуться",
+                "regulation": "ТКП 45-1.03-40-2016 п. 4.8",
+                "penalty": 3,
+                "is_correct": True,
+                "image_key": "spilled_oil"
+            },
+            {
+                "id": "incorrect_fire_exit",
+                "name": "Неправильная маркировка пожарного выхода",
+                "description": "Знаки пожарного выхода отсутствуют или не соответствуют нормам",
+                "regulation": "СТБ 1392-2003 п. 6.3",
+                "penalty": 5,
+                "is_correct": True,
+                "image_key": "incorrect_fire_exit"
+            },
+            {
+                "id": "no_emergency_plan",
+                "name": "Отсутствие плана эвакуации",
+                "description": "В помещении нет плана эвакуации при пожаре",
+                "regulation": "СТБ 11.13.03-2009 п. 7.5",
+                "penalty": 6,
+                "is_correct": True,
+                "image_key": "no_emergency_plan"
+            },
             
             # Неправильные нарушения (10 штук)
             {
@@ -307,7 +343,7 @@ class SafetyGame:
         return violations
     
     def create_factory_rooms(self):
-        """Создаем комнаты завода с правильными нарушениями"""
+        """Создаем комнаты завода с 4 правильными нарушениями в каждой"""
         rooms = [
             {
                 "name": "ЦЕХ МЕХАНИЧЕСКОЙ ОБРАБОТКИ",
@@ -327,7 +363,7 @@ class SafetyGame:
                 "id": "warehouse",
                 "description": "Складское помещение для хранения металлических заготовок и готовой продукции. Высота потолков 6 метров. Площадь склада 400 м².",
                 "detailed_description": "На складе материалов хранятся металлические заготовки и готовая продукция. Складщик использует погрузчик для перемещения паллет. Стеллажи металлические, высотой 5 метров.",
-                "correct_violations": ["high_storage", "no_safety_signs", "blocked_exit"],
+                "correct_violations": ["high_storage", "no_safety_signs", "blocked_exit", "no_fire_extinguisher"],
                 "worker_action": "перемещение паллет с помощью погрузчика",
                 "hazards": "Падение груза, опрокидывание погрузчика, завал стеллажей",
                 "color": "#4ECDC4",
@@ -340,7 +376,7 @@ class SafetyGame:
                 "id": "electrical_room",
                 "description": "Помещение с распределительными щитами и электрооборудованием. Температура поддерживается на уровне 18°C. Влажность не более 60%.",
                 "detailed_description": "В электрощитовой расположены распределительные щиты. Электрик проверяет показания счетчиков и состояние автоматических выключателей.",
-                "correct_violations": ["no_grounding", "no_first_aid", "cables_on_floor"],
+                "correct_violations": ["no_grounding", "no_first_aid", "cables_on_floor", "no_safety_signs"],
                 "worker_action": "проверка показаний счетчиков и оборудования",
                 "hazards": "Поражение электрическим током, короткое замыкание",
                 "color": "#45B7D1",
@@ -353,7 +389,7 @@ class SafetyGame:
                 "id": "canteen",
                 "description": "Помещение для приема пищи работниками. Имеется микроволновая печь, холодильник, кулер с водой, 8 столов на 32 посадочных места.",
                 "detailed_description": "В столовой работница разогревает обед в микроволновой печи. На столах расставлены салфетки и приборы. В углу помещения стоит холодильник.",
-                "correct_violations": ["no_first_aid", "bad_ventilation", "no_fire_extinguisher"],
+                "correct_violations": ["no_first_aid", "bad_ventilation", "no_fire_extinguisher", "spilled_oil"],
                 "worker_action": "разогрев обеда в микроволновой печи",
                 "hazards": "Пожар от электроприборов, пищевое отравление",
                 "color": "#FFE66D",
@@ -366,7 +402,7 @@ class SafetyGame:
                 "id": "welding",
                 "description": "Участок для сварочных работ. Имеется сварочный аппарат, баллоны с газом, вытяжная система. Площадь поста 20 м².",
                 "detailed_description": "Сварщик выполняет сварку металлических конструкций. Используется аппарат для дуговой сварки. Рядом стоят баллоны с газом.",
-                "correct_violations": ["ppe_missing", "no_fire_extinguisher", "chemicals_open"],
+                "correct_violations": ["ppe_missing", "no_fire_extinguisher", "chemicals_open", "no_safety_glasses"],
                 "worker_action": "дуговая сварка металлических конструкций",
                 "hazards": "Ультрафиолетовое излучение, искры, отравление газами",
                 "color": "#95E1D3",
@@ -379,7 +415,7 @@ class SafetyGame:
                 "id": "corridor",
                 "description": "Основные проходы между цехами и эвакуационные пути. Ширина проходов 2.5 метра. Длина коридора 40 метров.",
                 "detailed_description": "В главном коридоре завода работник переносит коробки с документами. Вдоль стены стоят ящики с оборудованием.",
-                "correct_violations": ["blocked_exit", "bad_emergency_light"],
+                "correct_violations": ["blocked_exit", "bad_emergency_light", "incorrect_fire_exit", "no_emergency_plan"],
                 "worker_action": "перенос коробок с документами",
                 "hazards": "Затрудненная эвакуация, падение в темноте",
                 "color": "#F38181",
@@ -391,29 +427,81 @@ class SafetyGame:
         return rooms
     
     def load_room_images(self):
-        """Загружаем или создаем изображения для комнат"""
+        """Загружаем изображения для комнат - ВСТАВЬТЕ СВОИ КАРТИНКИ ЗДЕСЬ!"""
         try:
-            # Создаем простые изображения для демо
-            # В реальной игре здесь нужно загрузить реальные картинки
-            for room in self.rooms:
-                img = Image.new('RGB', (400, 300), room["color"])
-                draw = ImageDraw.Draw(img)
-                
+            # Для каждой комнаты загружаем изображение
+            image_paths = {
+                "workshop": "workshop_image.jpg",      # Изображение для цеха
+                "warehouse": "warehouse_image.jpg",    # Изображение для склада
+                "electrical_room": "electrical_image.jpg",  # Изображение для электрощитовой
+                "canteen": "canteen_image.jpg",        # Изображение для столовой
+                "welding": "welding_image.jpg",        # Изображение для сварочного поста
+                "corridor": "corridor_image.jpg"       # Изображение для коридора
+            }
+            
+            for room_id, image_path in image_paths.items():
                 try:
-                    font = ImageFont.truetype("arial.ttf", 20)
+                    # Пробуем загрузить ваше изображение
+                    if os.path.exists(image_path):
+                        img = Image.open(image_path)
+                        img = img.resize((800, 500), Image.Resampling.LANCZOS)
+                    else:
+                        # Если файл не найден, создаем временное изображение
+                        img = self.create_temp_room_image(room_id)
                 except:
-                    font = ImageFont.load_default()
-                
-                draw.text((200, 50), room["name"], fill='white', font=font, anchor='mm')
-                draw.text((200, 150), "Изображение комнаты", fill='white', font=font, anchor='mm')
-                draw.text((200, 200), room["worker_action"], fill='white', font=font, anchor='mm')
+                    # Если ошибка, создаем временное изображение
+                    img = self.create_temp_room_image(room_id)
                 
                 photo = ImageTk.PhotoImage(img)
-                self.room_images[room["id"]] = photo
+                self.room_images[room_id] = photo
                 
         except Exception as e:
             print(f"Ошибка загрузки изображений: {e}")
+            # Создаем временные изображения для всех комнат
+            for room in self.rooms:
+                img = self.create_temp_room_image(room["id"])
+                photo = ImageTk.PhotoImage(img)
+                self.room_images[room["id"]] = photo
     
+    def create_temp_room_image(self, room_id):
+        """Создаем временное изображение для комнаты (используется если нет ваших картинок)"""
+        img = Image.new('RGB', (800, 500), '#3a506b')
+        draw = ImageDraw.Draw(img)
+        
+        try:
+            font = ImageFont.truetype("arial.ttf", 30)
+        except:
+            font = ImageFont.load_default()
+        
+        # Находим название комнаты
+        room_name = ""
+        for room in self.rooms:
+            if room["id"] == room_id:
+                room_name = room["name"]
+                break
+        
+        draw.rectangle([0, 0, 800, 50], fill="#333333")
+        draw.text((400, 25), room_name, fill='white', font=font, anchor='mm')
+        draw.text((400, 200), "ВАШЕ ИЗОБРАЖЕНИЕ", fill='white', font=font, anchor='mm')
+        draw.text((400, 250), "Разместите файл в папке с программой:", fill='white', font=ImageFont.load_default(), anchor='mm')
+        
+        if room_id == "workshop":
+            draw.text((400, 300), "workshop_image.jpg", fill='yellow', font=ImageFont.load_default(), anchor='mm')
+        elif room_id == "warehouse":
+            draw.text((400, 300), "warehouse_image.jpg", fill='yellow', font=ImageFont.load_default(), anchor='mm')
+        elif room_id == "electrical_room":
+            draw.text((400, 300), "electrical_image.jpg", fill='yellow', font=ImageFont.load_default(), anchor='mm')
+        elif room_id == "canteen":
+            draw.text((400, 300), "canteen_image.jpg", fill='yellow', font=ImageFont.load_default(), anchor='mm')
+        elif room_id == "welding":
+            draw.text((400, 300), "welding_image.jpg", fill='yellow', font=ImageFont.load_default(), anchor='mm')
+        elif room_id == "corridor":
+            draw.text((400, 300), "corridor_image.jpg", fill='yellow', font=ImageFont.load_default(), anchor='mm')
+        
+        return img
+
+
+
     def setup_main_interface(self):
         """Настраиваем основной интерфейс"""
         # Создаем стилизованную верхнюю панель
@@ -722,37 +810,43 @@ class SafetyGame:
                                 padx=15, pady=15)
         content_frame.pack(fill=tk.BOTH, expand=True)
         
-        # Информация об объекте
+        # Информация об объекте - выравнивание с использованием grid
+        info_frame = tk.Frame(content_frame, bg=self.colors["card_bg"])
+        info_frame.pack(fill=tk.X)
+        
         info_items = [
             ("🏢 Организация:", "ОАО 'Минский машиностроительный завод'"),
             ("📍 Адрес:", "г. Минск, ул. Заводская, 15"),
-            ("👨‍💼 Руководитель:", "Ген. директор Иванов И.И."),
-            ("🛡️ Ответственный по ОТ:", "Гл. инженер Петров П.П."),
+            ("👨‍💼 Руководитель:", "Ген. директор Раевская А.А."),
+            ("🛡️ Ответственный по ОТ:", "Гл. инженер Филановичи Д. и Я."),
             ("📅 Год постройки:", "1978 (ремонт 2019)"),
             ("📐 Общая площадь:", "12 500 м²"),
             ("👥 Численность:", "245 сотрудников"),
             ("🔄 Режим работы:", "2 смены, 5/2")
         ]
         
-        for title, value in info_items:
-            item_frame = tk.Frame(content_frame, bg=self.colors["card_bg"])
-            item_frame.pack(fill=tk.X, pady=2)
-            
-            title_label = tk.Label(item_frame,
+        # Используем grid для точного выравнивания
+        for i, (title, value) in enumerate(info_items):
+            title_label = tk.Label(info_frame,
                                   text=title,
                                   font=("Arial", 10, "bold"),
                                   bg=self.colors["card_bg"],
                                   fg=self.colors["primary"],
-                                  width=20,
+                                  width=25,
                                   anchor='w')
-            title_label.pack(side=tk.LEFT)
+            title_label.grid(row=i, column=0, sticky='w', padx=(0, 10), pady=2)
             
-            value_label = tk.Label(item_frame,
+            value_label = tk.Label(info_frame,
                                   text=value,
                                   font=("Arial", 10),
                                   bg=self.colors["card_bg"],
-                                  fg=self.colors["fg"])
-            value_label.pack(side=tk.LEFT, padx=(5, 0))
+                                  fg=self.colors["fg"],
+                                  anchor='w')
+            value_label.grid(row=i, column=1, sticky='w', pady=2)
+        
+        # Настраиваем равномерное распределение колонок
+        info_frame.columnconfigure(0, weight=0)
+        info_frame.columnconfigure(1, weight=1)
         
         # Разделитель
         ttk.Separator(content_frame, orient='horizontal').pack(fill=tk.X, pady=15)
@@ -978,9 +1072,12 @@ class SafetyGame:
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH)
         right_frame.pack_propagate(False)
         
-        # Контейнер для выбора нарушений
-        violations_container = tk.Frame(right_frame, bg=self.colors["card_bg"],
-                                       relief=tk.RAISED, bd=2)
+        # Создаем основной контейнер с прокруткой
+        main_container = tk.Frame(right_frame, bg=self.colors["bg"])
+        main_container.pack(fill=tk.BOTH, expand=True)
+        
+        # Контейнер для выбора нарушений с прокруткой
+        violations_container = tk.Frame(main_container, bg=self.colors["card_bg"])
         violations_container.pack(fill=tk.BOTH, expand=True)
         
         # Заголовок
@@ -1001,46 +1098,44 @@ class SafetyGame:
                              pady=10)
         info_label.pack()
         
-        # Список нарушений с прокруткой
-        violations_canvas = tk.Canvas(violations_container,
+        # Фрейм для списка нарушений
+        violations_list_frame = tk.Frame(violations_container, bg=self.colors["card_bg"])
+        violations_list_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        
+        # Полоса прокрутки
+        scrollbar = tk.Scrollbar(violations_list_frame)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Canvas для плавной прокрутки
+        violations_canvas = tk.Canvas(violations_list_frame,
                                      bg=self.colors["card_bg"],
+                                     yscrollcommand=scrollbar.set,
                                      highlightthickness=0)
-        scrollbar = ttk.Scrollbar(violations_container,
-                                 orient=tk.VERTICAL,
-                                 command=violations_canvas.yview)
+        violations_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        self.violations_frame = tk.Frame(violations_canvas,
-                                        bg=self.colors["card_bg"])
+        scrollbar.config(command=violations_canvas.yview)
         
-        violations_canvas.configure(yscrollcommand=scrollbar.set)
-        violations_canvas.create_window((0, 0),
-                                       window=self.violations_frame,
-                                       anchor="nw",
-                                       width=460)
+        # Внутренний фрейм для нарушений
+        inner_frame = tk.Frame(violations_canvas, bg=self.colors["card_bg"])
+        violations_canvas.create_window((0, 0), window=inner_frame, anchor='nw', width=440)
         
         # Создаем кнопки нарушений
-        self.create_violation_buttons(room)
+        self.create_violation_buttons(room, inner_frame)
         
-        # Настраиваем прокрутку
-        self.violations_frame.bind("<Configure>",
-                                  lambda e: violations_canvas.configure(
-                                      scrollregion=violations_canvas.bbox("all")
-                                  ))
+        # Обновляем размер прокрутки
+        inner_frame.update_idletasks()
+        violations_canvas.config(scrollregion=violations_canvas.bbox("all"))
         
-        # Размещаем элементы
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        violations_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=20, pady=10)
-        
-        # Кнопка проверки
+        # Фрейм для кнопки проверки (внизу)
         check_frame = tk.Frame(violations_container, bg=self.colors["card_bg"],
                               pady=20)
-        check_frame.pack(fill=tk.X, padx=20)
+        check_frame.pack(fill=tk.X, padx=20, side=tk.BOTTOM)
         
         check_btn = tk.Button(check_frame,
                              text="✅ ПРОВЕРИТЬ ВЫБОР",
                              command=lambda: self.check_violations(room),
                              font=("Arial", 12, "bold"),
-                             bg=self.colors["success"],
+                             bg="#27ae60",  # Зеленый цвет
                              fg="white",
                              relief=tk.RAISED,
                              padx=40,
@@ -1048,13 +1143,13 @@ class SafetyGame:
                              cursor="hand2")
         check_btn.pack(fill=tk.X)
     
-    def create_violation_buttons(self, room):
+    def create_violation_buttons(self, room, parent_frame):
         """Создаем кнопки для выбора нарушений"""
         # Очищаем предыдущие кнопки
-        for widget in self.violations_frame.winfo_children():
+        for widget in parent_frame.winfo_children():
             widget.destroy()
         
-        # Выбираем 8 случайных нарушений для этой комнаты
+        # Выбираем 8 случайных нарушений для этой комнаты (4 правильных + 4 неправильных)
         correct_violations = [v for v in self.all_violations
                              if v["id"] in room["correct_violations"]]
         
@@ -1062,7 +1157,7 @@ class SafetyGame:
         wrong_violations = [v for v in self.all_violations
                            if v["id"] not in room["correct_violations"]
                            and not v["is_correct"]]
-        wrong_violations = random.sample(wrong_violations, 8 - len(correct_violations))
+        wrong_violations = random.sample(wrong_violations, 4)  # Теперь 4 неправильных
         
         # Смешиваем нарушения
         all_violations = correct_violations + wrong_violations
@@ -1073,11 +1168,11 @@ class SafetyGame:
         
         for violation in all_violations:
             # Создаем фрейм для каждого нарушения
-            violation_frame = tk.Frame(self.violations_frame,
+            violation_frame = tk.Frame(parent_frame,
                                       bg=self.colors["card_bg"],
                                       relief=tk.GROOVE,
                                       bd=1)
-            violation_frame.pack(fill=tk.X, pady=5, padx=5)
+            violation_frame.pack(fill=tk.X, pady=5)
             
             # Переменная для чекбокса
             var = tk.BooleanVar(value=False)
@@ -1353,7 +1448,7 @@ class SafetyGame:
 1. Изучите карту завода в основном окне
 2. Кликните на любую комнату для детального осмотра
 3. Изучите изображение и описание комнаты
-4. В правой панели выберите РЕАЛЬНЫЕ нарушения (2-4 на комнату)
+4. В правой панели выберите РЕАЛЬНЫЕ нарушения (4 на комнату)
 5. Нажмите "ПРОВЕРИТЬ ВЫБОР" для проверки
 6. Используйте подсказки 💡 если нужно
 7. Вернитесь к карте и проверьте другие комнаты
@@ -1361,12 +1456,12 @@ class SafetyGame:
 🎮 ОСОБЕННОСТИ ИГРЫ:
 • 3 темы оформления (светлая, темная, синяя)
 • 6 комнат с уникальными нарушениями
-• 12 реальных нарушений по нормам РБ
+• 4 реальных нарушения в каждой комнате (всего 24)
 • 3 подсказки на всю игру
 • Система подсчета очков и эффективности
 
 📋 ПРАВИЛА:
-• В каждой комнате нужно найти ВСЕ реальные нарушения
+• В каждой комнате нужно найти ВСЕ 4 реальных нарушения
 • За неправильный выбор очки не снимаются
 • Используйте подсказки экономно
 • Чем меньше попыток - тем выше эффективность
@@ -1398,7 +1493,7 @@ class SafetyGame:
             self.game_stats = {
                 "rooms_checked": 0,
                 "violations_found": 0,
-                "total_violations": 24,
+                "total_violations": 24,  # 6 комнат × 4 нарушения
                 "hints_used": 0,
                 "attempts": 0,
                 "score": 0
